@@ -1,17 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://qc2yt7m7siwc"]
+[gd_scene load_steps=2 format=3 uid="uid://qc2yt7m7siwc"]
 
-[ext_resource type="Shader" uid="uid://b5vgox171w02l" path="res://enviroment/volumetric_clouds/raymarched_clouds.gdshader" id="1_2gju5"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_2gju5"]
-render_priority = 0
-shader = ExtResource("1_2gju5")
-shader_parameter/_sunPosition = Vector3(0, 0, 0)
-
-[sub_resource type="BoxMesh" id="BoxMesh_rlkm5"]
-material = SubResource("ShaderMaterial_2gju5")
-size = Vector3(5, 5, 5)
+[ext_resource type="PackedScene" uid="uid://dh0u5dkyy03yb" path="res://entities/sheep/sheep.tscn" id="1_2gju5"]
 
 [node name="TestScene" type="Node3D"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_rlkm5")
+[node name="Sheep" parent="." instance=ExtResource("1_2gju5")]
