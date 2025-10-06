@@ -5,49 +5,59 @@ class_name SheepAI
 
 #Potentially a dictionary with an array might be better
 #Something for later
-static var all_sheep : Array[SheepAI]
 
 #One must imaging a spherical sheep
 var sheep_diameter : float
-var speed : float
-static var alignment : float
-static var separation : float 
-static var cohesion : float #Cohesion is gonna start high
-static var max_speed : float
+var velocity : Vector3
+var acceleration : Vector3
 
 var sight : float
 var min_flock_size : int
 var hunger : float #This will determine Grazing behaviour
 var thirst : float #Grazing behaviour but near water
 
-func _process(delta):
-	return
+func _ready() -> void:
+	SheepManager._i.all_sheep.append(self)
+	#if(!SheepManager._i.all_sheep.has(Vector3i(self.position))):
+	#	SheepManager._i.all_sheep[self.position] = [self]
+	#	pass
+	#SheepManager._i.all_sheep[self.position].append(self)
+	pass
 
-#Good layout of the rules are here:
-#https://people.engr.tamu.edu/sueda/courses/CSCE450/2023F/projects/Frank_Martinez/index.html
-func cohesion_calculation():
-	if len(all_sheep) == 0:
-		return Vector3(0,0,0)
+func _process(delta: float) -> void:
+	#await SheepManager._i.calculate_globals
+	#calculate_sheep(delta)
+	pass
 	
-	var center_of_mass = Vector3(0,0,0)
-	var avg_speed = 0
-	for sheep in all_sheep:
-		center_of_mass += sheep.position
-		avg_speed += sheep.speed;
-		break
-	center_of_mass /= len(all_sheep)
-	var cohesion_vector = center_of_mass - position
-	return cohesion_vector * avg_speed;
-
-func alignment_calculation():
-	return;
-
-#This is technically 2D BOIDS lmao
-func separation_calculation():
+func calculate_sheep(delta: float):
 	
-	return;
-
-
-func predator_calculation():
-	return;
+	var center_bin : Vector3i = self.position
 	
+	var alignment_force = steer_towards(SheepManager._i.average_velocity.normalized());
+	var cohesion_force = steer_towards (SheepManager._i.center_of_mass);
+	var seperation_force = Vector3(0,0,0)
+	
+	for i in range(-1, 1):
+		for j in range(-1, 1):
+			for sheep in SheepManager._i.sheep_at_position[center_bin]:
+				var seperation_vector : Vector3 = position - sheep.position;
+				if(seperation_vector.length_squared() < sight * sight):
+					var remap = seperation_vector/sheep_diameter;
+					seperation_force += 1/(remap* remap)
+					pass
+				pass
+	
+
+
+	acceleration += alignment_force;
+	acceleration += cohesion_force;
+	acceleration += seperation_force;
+	velocity += acceleration * delta;
+	position += velocity * delta;
+	
+	print(name + " " + str(position))
+	pass
+
+func steer_towards (vect: Vector3) -> Vector3:
+	var v : Vector3 = vect.normalized() * SheepManager._i.max_speed - velocity;
+	return v;

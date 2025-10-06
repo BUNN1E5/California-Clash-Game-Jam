@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="California-Clash-Game-Jam"
+run/main_scene="uid://qc2yt7m7siwc"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdterm/plugin.cfg")
 
 [physics]
 

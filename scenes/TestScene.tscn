@@ -1,7 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://qc2yt7m7siwc"]
+[gd_scene load_steps=3 format=3 uid="uid://qc2yt7m7siwc"]
 
-[ext_resource type="PackedScene" uid="uid://dh0u5dkyy03yb" path="res://entities/sheep/sheep.tscn" id="1_2gju5"]
+[ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2gju5"]
+size = Vector2(20, 20)
 
 [node name="TestScene" type="Node3D"]
 
-[node name="Sheep" parent="." instance=ExtResource("1_2gju5")]
+[node name="SheepManager" type="Node" parent="."]
+script = ExtResource("2_rlkm5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -12.132822, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.633)

@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh0u5dkyy03yb"]
+[gd_scene load_steps=3 format=3 uid="uid://dh0u5dkyy03yb"]
 
 [ext_resource type="Script" uid="uid://m5avq1tmmav7" path="res://entities/sheep/sheep_ai.gd" id="1_c3js0"]
 
+[sub_resource type="SphereMesh" id="SphereMesh_c3js0"]
+
 [node name="Sheep" type="Node3D"]
 script = ExtResource("1_c3js0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_c3js0")
