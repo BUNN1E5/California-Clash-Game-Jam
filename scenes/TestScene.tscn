@@ -26,7 +26,6 @@ alignment = 1.0
 separation = 1.0
 cohesion = 1.0
 max_speed = 1.0
-friction = 1.0
 max_force = 1.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

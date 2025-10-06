@@ -7,7 +7,7 @@ var sheep_prefab = preload("res://entities/sheep/sheep.tscn")
 @export var separation : float 
 @export var cohesion : float #Cohesion is gonna start high
 @export var max_speed : float
-@export var friction : float
+@export var drag : float = 1.
 @export var max_force : float = 10.
 
 var gravity : float = -9.81
@@ -39,6 +39,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	calculate_globals()
+	update_boids(delta)
 
 #Good layout of the rules are here:
 #https://people.engr.tamu.edu/sueda/courses/CSCE450/2023F/projects/Frank_Martinez/index.html
@@ -55,5 +56,42 @@ func calculate_globals():
 	return
 	
 
-static func update_boids():
-	return
+func update_boids(delta : float):
+
+	for sheep in all_sheep:
+		var alignment_force = average_velocity - sheep.velocity
+		alignment_force = alignment_force.normalized() * min(alignment_force.length(), max_speed)
+		var cohesion_force = center_of_mass - sheep.position
+		cohesion_force = cohesion_force.normalized() * min(cohesion_force.length(), max_speed)
+		var pushing_force : Vector3 = Vector3.ZERO
+		var neighbors_count : int = 0
+		for other in all_sheep:
+			if sheep == other:
+				continue
+			var pushing_vector : Vector3 = sheep.position - other.position;
+			var distance_squared : float = pushing_vector.length_squared()
+			if(distance_squared < sheep.sheep_diameter * sheep.sheep_diameter):
+				neighbors_count+=1
+				#x^2/y^2 = (x/y)^2
+				var remap : float = (sheep.sheep_diameter*sheep.sheep_diameter)/distance_squared;
+				#pushing_force += pushing_vector * min(remap, max_force);
+				pushing_force += pushing_vector * remap;
+		pushing_force /= max(1, neighbors_count) 
+		
+		sheep.acceleration += alignment_force * alignment;
+		sheep.acceleration += cohesion_force * cohesion;
+		sheep.acceleration += pushing_force * separation;
+		sheep.acceleration += Vector3(0, gravity, 0)
+		
+		#DebugDraw3D.draw_line(position, position + acceleration, Color.BLACK)
+		#sheep.acceleration = sheep.acceleration.limit_length(10)
+		sheep.velocity += sheep.acceleration * delta;
+		#velocity += acceleration.normalized() * max(acceleration.length(), max_force) * delta;
+		sheep.position += sheep.velocity * delta;
+		#position = Vector3(fposmod(position.x, 50.), fposmod(position.y, 50.), fposmod(position.z, 50.))
+		sheep.rotation = -sheep.velocity.normalized()
+		#Temp ground plane At zero
+		if(sheep.position.y < -9.):
+			sheep.position.y = -9.0
+			sheep.acceleration.y = min(0, sheep.acceleration.y)
+			sheep.velocity.y = min(0, sheep.velocity.y)
