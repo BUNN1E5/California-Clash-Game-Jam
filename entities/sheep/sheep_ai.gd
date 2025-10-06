@@ -37,8 +37,8 @@ func calculate_sheep(delta: float):
 	var cohesion_force = steer_towards (SheepManager._i.center_of_mass);
 	var seperation_force = Vector3(0,0,0)
 	
-	for i in range(-1, 1):
-		for j in range(-1, 1):
+	for i in range(-floor(sight), ceil(sight)):
+		for j in range(-floor(sight), ceil(sight)):
 			for sheep in SheepManager._i.sheep_at_position[center_bin]:
 				var seperation_vector : Vector3 = position - sheep.position;
 				if(seperation_vector.length_squared() < sight * sight):
