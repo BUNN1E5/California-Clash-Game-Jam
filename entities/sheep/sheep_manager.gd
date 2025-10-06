@@ -27,10 +27,10 @@ func _ready() -> void:
 	if(error == OK):
 		names_available = json.data
 	_i = self
-	for i in range(1):
+	for i in range(289):
 		var sheep = sheep_prefab.instantiate() as SheepAI
 		add_child(sheep)
-		sheep.position = Vector3(randf(), randf(), randf()) * sheep.sheep_diameter*2 * (i+1)
+		sheep.position = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)) * sheep.sheep_diameter*2 * (i+1)
 		if(!names_available.is_empty()):
 			var index = randi_range(0, len(names_available)-1)
 			sheep.name = "sheep | " + names_available[index]

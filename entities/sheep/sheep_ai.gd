@@ -35,8 +35,6 @@ func _process(delta: float) -> void:
 
 func calculate_sheep(delta: float):
 	
-	var center_bin : Vector3i = self.position
-	
 	var alignment_force = manager.average_velocity - velocity
 	alignment_force = alignment_force.normalized() * min(alignment_force.length(), manager.max_speed)
 	var cohesion_force = manager.center_of_mass - position
@@ -51,9 +49,9 @@ func calculate_sheep(delta: float):
 		if(distance_squared < sheep_diameter * sheep_diameter):
 			neighbors_count+=1
 			#x^2/y^2 = (x/y)^2
-			var remap : float = distance_squared/(sheep_diameter*sheep_diameter);
-			seperation_force += seperation_vector * min(1./remap, manager.max_force);
-	seperation_force /= neighbors_count 
+			var remap : float = (sheep_diameter*sheep_diameter)/distance_squared;
+			seperation_force += seperation_vector * min(remap, manager.max_force);
+	seperation_force /= max(1, neighbors_count) 
 	
 	#spacial partitioning with dict
 	#for i in range(-floor(sight), ceil(sight)):
