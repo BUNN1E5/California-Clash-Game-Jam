@@ -28,10 +28,6 @@ follow_viewport_enabled = true
 
 [node name="SheepManager" type="Node" parent="."]
 script = ExtResource("2_rlkm5")
-max_speed = 50.0
-cohesion_mult = 12.315
-alignment_mult = 6.06
-seperation_mult = -4.795
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)

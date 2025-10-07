@@ -4,7 +4,6 @@ class_name SheepAI
 #https://www.sheep101.info/201/behavior.html
 
 #One must imaging a spherical sheep
+var sheep_name : String
 var sheep_diameter : float = .5
 var velocity : Vector3 = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
-var acceleration : Vector3
-var sight : float = 1.

@@ -17,13 +17,13 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 @export var seperation_radius : float = 5.0
 @export var fear_radius : float = 4.2        # same as r_fear
 @export var emotional_stress_mult : float = 0.7   # m (sigmoid multiplier)
-@export var max_speed : float = 1.0          # MaxSpeed
 
 # --- Flocking Parameters ---
 @export_category("Flocking Parameters")
 @export var cohesion_mult : float = 2.0      # Cf
 @export var alignment_mult : float = 0.5     # Af
 @export var seperation_mult : float = 0.17   # Sf
+@export var max_speed : float = 1.0          # MaxSpeed
 
 # --- Panicked Multipliers ---
 @export_category("Panicked Multipliers")
@@ -31,6 +31,7 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 @export var alignment_panicked_mult : float = 0.2  # Aef
 @export var seperation_panicked_mult : float = 0.0 # Sef (none in paper)
 @export var escape_panicked_mult : float = 5.0     # Eef
+@export var max_speed_panicked : float = 1.0          # MaxSpeed
 
 # --- Utility State ---
 var names_available: Array = []
@@ -61,6 +62,7 @@ func _ready() -> void:
 		if !names_available.is_empty():
 			var index: int = randi_range(0, names_available.size() - 1)
 			sheep.name = "sheep | " + names_available[index]
+			sheep.sheep_name = sheep.name
 			names_available.remove_at(index)
 			
 		# Add sheep to the array for global calculations
@@ -71,7 +73,7 @@ func _process(delta: float) -> void:
 		return
 	calculate_globals()
 	for sheep in all_sheep:
-		sheep.velocity += calculate_result_vector(sheep, predators) * delta
+		sheep.velocity += calculate_result_vector(sheep, predators)
 		sheep.position += sheep.velocity * delta
 		sheep.position = Vector3(fmod(sheep.position.x, 20.), fmod(sheep.position.y, 20.),fmod(sheep.position.z, 20.))
 		DebugDraw3D.draw_box(Vector3.ONE * -20, Quaternion.IDENTITY, Vector3.ONE * 40, Color.BLACK)
@@ -123,7 +125,7 @@ func calculate_result_vector(sheep : SheepAI, predators):
 	DebugDraw3D.draw_line(sheep.position,sheep.position + evasion.normalized() * stress, Color.RED)
 	
 	v += cohesion + alignment + seperation + evasion
-	v = v.normalized() * min(v.length(), stress * max_speed)
+	v = v.normalized() * min(v.length(),  (1 + stress * max_speed_panicked) * max_speed)
 	return v
 
 
