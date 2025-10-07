@@ -3,7 +3,7 @@ class_name SheepManager
 
 #We are gonna rewrite this with this as a base
 #https://www.csc.kth.se/utbildning/kth/kurser/DD143X/dkand13/Group9Petter/report/Martin.Barksten.David.Rydberg.report.pdf
-const FLOCK_SIZE = 50
+const FLOCK_SIZE = 100
 const sheep_prefab = preload("res://entities/sheep/sheep.tscn")
 const EPSILON = 0.00001
 
@@ -66,6 +66,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if all_sheep.is_empty():
 		return
+	calculate_globals()
 	for sheep in all_sheep:
 		sheep.position += calculate_result_vector(sheep, predators) * delta	
 
@@ -89,14 +90,15 @@ func alignment_rule(sheep : SheepAI):
 	return alignment_vector
 
 func cohesion_rule(sheep : SheepAI) -> Vector3:
-	var cohesion_vector = (average_position - sheep.position).normalized()
-	return cohesion_vector
+	var cohesion_vector = (average_position - sheep.position)
+	return cohesion_vector.normalized()
 	
 func seperation_rule(sheep : SheepAI, neightbor_radius : float):
 	var seperation_vector : Vector3 = Vector3.ZERO
 	for other in all_sheep:
 		if sheep == other:
 			continue
+		DebugDraw3D.draw_line(sheep.position, other.position, Color.AQUA)
 		var seperation : Vector3 = (other.position - sheep.position)
 		var distance : float = seperation.length_squared()
 		seperation_vector += (neightbor_radius**2-distance)/distance * seperation
@@ -106,12 +108,15 @@ func seperation_rule(sheep : SheepAI, neightbor_radius : float):
 func calculate_result_vector(sheep : SheepAI, predators):
 	var stress = 0.
 	for predator in predators:
+		DebugDraw3D.draw_sphere(predator.position, sheep_sight, Color.RED)
 		stress = max(stress, emotional_stress(sheep.position.distance_to(predator.position), sheep_sight, 100))
 	var v : Vector3 = Vector3.ZERO
-	v += cohesion_mult * (1 + stress * cohesion_panicked_mult) * cohesion_rule(sheep)
-	v += alignment_mult * (1 + stress * alignment_panicked_mult) * alignment_rule(sheep)
-	v += seperation_mult * (1 + stress * seperation_panicked_mult) * seperation_rule(sheep, sheep_sight)
-	v += (1 + stress * escape_panicked_mult) * escape_rule(sheep, predators)
+	var cohesion = cohesion_mult * (1 + stress * cohesion_panicked_mult) * cohesion_rule(sheep)
+	var alignment = alignment_mult * (1 + stress * alignment_panicked_mult) * alignment_rule(sheep)
+	var seperation = seperation_mult * (1 + stress * seperation_panicked_mult) * seperation_rule(sheep, sheep_sight)
+	var evasion = (1 + stress * escape_panicked_mult) * escape_rule(sheep, predators)
+	
+	v += cohesion + alignment + seperation + evasion
 	v = stress * max_speed * v.normalized()
 	return v
 

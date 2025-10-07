@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://qc2yt7m7siwc"]
+[gd_scene load_steps=9 format=3 uid="uid://qc2yt7m7siwc"]
 
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="2_n77mx"]
 [ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
@@ -15,14 +15,26 @@ sky_material = SubResource("ProceduralSkyMaterial_2gju5")
 background_mode = 2
 sky = SubResource("Sky_rlkm5")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rlkm5"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_n77mx"]
+material = SubResource("StandardMaterial3D_rlkm5")
+
 [node name="TestScene" type="Node3D"]
 
 [node name="CanvasLayer" parent="." instance=ExtResource("2_n77mx")]
 follow_viewport_enabled = true
 
-[node name="SheepManager" type="Node" parent="."]
+[node name="SheepManager" type="Node" parent="." node_paths=PackedStringArray("predators")]
 script = ExtResource("2_rlkm5")
-max_speed = 1.0
+predators = [NodePath("../Predator")]
+flight_radius = 1.02
+average_position = Vector3(-5.54, -2.375, -1.03)
+max_speed = 6.18
+cohesion_mult = 3.185
+alignment_mult = 2.225
+seperation_mult = -0.19
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
@@ -37,3 +49,9 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_n77mx")
+
+[node name="Predator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 13.652385)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Predator"]
+mesh = SubResource("SphereMesh_n77mx")
