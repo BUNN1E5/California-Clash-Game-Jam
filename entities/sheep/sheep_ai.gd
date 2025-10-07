@@ -7,12 +7,4 @@ class_name SheepAI
 var sheep_diameter : float = .5
 var velocity : Vector3 = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
 var acceleration : Vector3
-
 var sight : float = 1.
-
-func _ready() -> void:
-	SheepManager._i.all_sheep.append(self)
-	pass
-
-func _process(delta: float) -> void:
-	pass

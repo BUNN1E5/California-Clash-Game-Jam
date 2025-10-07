@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://m5avq1tmmav7" path="res://entities/sheep/sheep_ai.gd" id="1_c3js0"]
 
-[sub_resource type="PrismMesh" id="PrismMesh_c3js0"]
+[sub_resource type="SphereMesh" id="SphereMesh_c3js0"]
 
 [node name="Sheep" type="Node3D"]
 script = ExtResource("1_c3js0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("PrismMesh_c3js0")
+mesh = SubResource("SphereMesh_c3js0")
