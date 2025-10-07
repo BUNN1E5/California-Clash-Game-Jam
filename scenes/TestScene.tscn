@@ -26,15 +26,12 @@ material = SubResource("StandardMaterial3D_rlkm5")
 [node name="CanvasLayer" parent="." instance=ExtResource("2_n77mx")]
 follow_viewport_enabled = true
 
-[node name="SheepManager" type="Node" parent="." node_paths=PackedStringArray("predators")]
+[node name="SheepManager" type="Node" parent="."]
 script = ExtResource("2_rlkm5")
-predators = [NodePath("../Predator")]
-flight_radius = 1.02
-average_position = Vector3(-5.54, -2.375, -1.03)
-max_speed = 6.18
-cohesion_mult = 3.185
-alignment_mult = 2.225
-seperation_mult = -0.19
+max_speed = 50.0
+cohesion_mult = 12.315
+alignment_mult = 6.06
+seperation_mult = -4.795
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
@@ -51,7 +48,7 @@ shadow_enabled = true
 environment = SubResource("Environment_n77mx")
 
 [node name="Predator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 13.652385)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Predator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 26.252335)
 mesh = SubResource("SphereMesh_n77mx")

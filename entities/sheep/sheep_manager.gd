@@ -2,8 +2,8 @@ extends Node
 class_name SheepManager
 
 #We are gonna rewrite this with this as a base
-#https://www.csc.kth.se/utbildning/kth/kurser/DD143X/dkand13/Group9Petter/report/Martin.Barksten.David.Rydberg.report.pdf
-const FLOCK_SIZE = 100
+#https://www.diva-portal.org/smash/get/diva2:1354921/FULLTEXT01.pdf
+const FLOCK_SIZE = 200
 const sheep_prefab = preload("res://entities/sheep/sheep.tscn")
 const EPSILON = 0.00001
 
@@ -12,22 +12,25 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 @export var predators :Array[Node3D] = []
 # --- Sheep Terms ---
 @export_category("Sheep Terms")
-@export var flight_radius : float = 1.
 @export var average_position : Vector3 = Vector3.ZERO
-@export var sheep_sight : float = 5.
-@export var emotional_stress_mult : float = 20.
-@export var max_speed : float = 5.
+@export var sheep_sight : float = 4.2        # r_fear in paper
+@export var seperation_radius : float = 5.0
+@export var fear_radius : float = 4.2        # same as r_fear
+@export var emotional_stress_mult : float = 0.7   # m (sigmoid multiplier)
+@export var max_speed : float = 1.0          # MaxSpeed
 
+# --- Flocking Parameters ---
 @export_category("Flocking Parameters")
-@export var cohesion_mult : float = 1
-@export var alignment_mult : float = 1
-@export var seperation_mult : float = 1
+@export var cohesion_mult : float = 2.0      # Cf
+@export var alignment_mult : float = 0.5     # Af
+@export var seperation_mult : float = 0.17   # Sf
 
+# --- Panicked Multipliers ---
 @export_category("Panicked Multipliers")
-@export var cohesion_panicked_mult : float = 1
-@export var alignment_panicked_mult : float = 1
-@export var seperation_panicked_mult : float = 1
-@export var escape_panicked_mult : float = 1
+@export var cohesion_panicked_mult : float = 10.0  # Cef
+@export var alignment_panicked_mult : float = 0.2  # Aef
+@export var seperation_panicked_mult : float = 0.0 # Sef (none in paper)
+@export var escape_panicked_mult : float = 5.0     # Eef
 
 # --- Utility State ---
 var names_available: Array = []
@@ -68,14 +71,17 @@ func _process(delta: float) -> void:
 		return
 	calculate_globals()
 	for sheep in all_sheep:
-		sheep.position += calculate_result_vector(sheep, predators) * delta	
-
+		sheep.velocity += calculate_result_vector(sheep, predators) * delta
+		sheep.position += sheep.velocity * delta
+		sheep.position = Vector3(fmod(sheep.position.x, 20.), fmod(sheep.position.y, 20.),fmod(sheep.position.z, 20.))
+		DebugDraw3D.draw_box(Vector3.ONE * -20, Quaternion.IDENTITY, Vector3.ONE * 40, Color.BLACK)
 
 func calculate_globals():
 	average_position = Vector3.ZERO
 	for sheep in all_sheep:
 		average_position += sheep.position
 	average_position /= len(all_sheep)
+	DebugDraw3D.draw_sphere(average_position, .5, Color.GREEN)
 	
 func alignment_rule(sheep : SheepAI):
 	var neighbor_count = 0
@@ -98,26 +104,26 @@ func seperation_rule(sheep : SheepAI, neightbor_radius : float):
 	for other in all_sheep:
 		if sheep == other:
 			continue
-		DebugDraw3D.draw_line(sheep.position, other.position, Color.AQUA)
-		var seperation : Vector3 = (other.position - sheep.position)
-		var distance : float = seperation.length_squared()
-		seperation_vector += (neightbor_radius**2-distance)/distance * seperation
+		var seperation : Vector3 = (sheep.position - other.position)
+		var distance : float = seperation.length()
+		seperation_vector += (neightbor_radius-distance)/distance * seperation
 	return seperation_vector
 	
 
 func calculate_result_vector(sheep : SheepAI, predators):
 	var stress = 0.
 	for predator in predators:
-		DebugDraw3D.draw_sphere(predator.position, sheep_sight, Color.RED)
-		stress = max(stress, emotional_stress(sheep.position.distance_to(predator.position), sheep_sight, 100))
+		DebugDraw3D.draw_sphere(predator.position, fear_radius, Color.RED)
+		stress = max(stress, emotional_stress(sheep.position.distance_to(predator.position), fear_radius, 100))
 	var v : Vector3 = Vector3.ZERO
 	var cohesion = cohesion_mult * (1 + stress * cohesion_panicked_mult) * cohesion_rule(sheep)
 	var alignment = alignment_mult * (1 + stress * alignment_panicked_mult) * alignment_rule(sheep)
-	var seperation = seperation_mult * (1 + stress * seperation_panicked_mult) * seperation_rule(sheep, sheep_sight)
+	var seperation = seperation_mult * (1 + stress * seperation_panicked_mult) * seperation_rule(sheep, seperation_radius)
 	var evasion = (1 + stress * escape_panicked_mult) * escape_rule(sheep, predators)
+	DebugDraw3D.draw_line(sheep.position,sheep.position + evasion.normalized() * stress, Color.RED)
 	
 	v += cohesion + alignment + seperation + evasion
-	v = stress * max_speed * v.normalized()
+	v = v.normalized() * min(v.length(), stress * max_speed)
 	return v
 
 
