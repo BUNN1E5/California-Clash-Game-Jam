@@ -22,7 +22,18 @@ follow_viewport_enabled = true
 
 [node name="SheepManager" type="Node" parent="."]
 script = ExtResource("2_rlkm5")
-max_speed = 1.0
+flight_radius = null
+average_position = null
+sheep_sight = null
+emotional_stress_mult = null
+max_speed = null
+cohesion_mult = null
+alignment_mult = null
+seperation_mult = null
+cohesion_panicked_mult = null
+alignment_panicked_mult = null
+seperation_panicked_mult = null
+escape_panicked_mult = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
