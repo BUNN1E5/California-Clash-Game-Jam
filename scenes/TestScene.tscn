@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2gju5"]
-size = Vector2(20, 20)
+size = Vector2(40, 40)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2gju5"]
 
@@ -44,7 +44,7 @@ shadow_enabled = true
 environment = SubResource("Environment_n77mx")
 
 [node name="Predator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.285, 0, 1.78)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Predator"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 26.252335)
 mesh = SubResource("SphereMesh_n77mx")

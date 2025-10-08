@@ -6,4 +6,5 @@ class_name SheepAI
 #One must imaging a spherical sheep
 var sheep_name : String
 var sheep_diameter : float = .5
+var stress : float = 0.
 var velocity : Vector3 = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
