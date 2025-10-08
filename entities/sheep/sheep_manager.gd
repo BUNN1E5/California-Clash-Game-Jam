@@ -16,6 +16,8 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 @export var seperation_radius : float = 5.0
 @export var fear_radius : float = 4.2        # same as r_fear
 @export var emotional_stress_mult : float = 0.7   # m (sigmoid multiplier)
+@export var random_motion_probability : float = .25
+@export var random_motion_intensity : float = 1
 @export_range(0, .99, .01) var drag : float = .99
 
 # --- Flocking Parameters ---
@@ -76,7 +78,7 @@ func _process(delta: float) -> void:
 		sheep.velocity = calculate_result_vector(sheep, predators)
 		sheep.velocity *= drag
 		sheep.position += sheep.velocity * delta
-		sheep.position = Vector3(clamp(sheep.position.x, -20., 20.), clamp(sheep.position.y, 0, 0), clamp(sheep.position.z, -20., 20.))
+		sheep.position = Vector3(clamp(sheep.position.x, -20., 20.), clamp(sheep.position.y, -20., 20.), clamp(sheep.position.z, -20., 20.))
 		DebugDraw3D.draw_box(Vector3.ONE * -20, Quaternion.IDENTITY, Vector3.ONE * 40, Color.BLACK)
 	
 func alignment_rule(sheep : SheepAI):
@@ -121,17 +123,26 @@ func seperation_rule(sheep : SheepAI, neighbor_radius : float) -> Vector3:
 	
 
 func calculate_result_vector(sheep : SheepAI, predators):
-	var predator_stress = 0
+	var max_predator_stress = 0
 	for predator in predators:
-		predator_stress = max(predator_stress, emotional_stress(sheep.position.distance_to(predator.position), fear_radius, emotional_stress_mult))
-	sheep.stress = predator_fear_mult * predator_stress + contagion_mult * fear_contagion(sheep) 
+		var predator_stress = emotional_stress(sheep.position.distance_to(predator.position), fear_radius, emotional_stress_mult)
+		DebugDraw3D.draw_sphere(sheep.position, predator_stress, Color.PALE_VIOLET_RED)
+		DebugDraw3D.draw_sphere(predator.position, fear_radius, Color.DARK_RED)
+		max_predator_stress = max(max_predator_stress, predator_stress)
+		
+	sheep.stress = predator_fear_mult * max_predator_stress + contagion_mult * fear_contagion(sheep) 
+	DebugDraw3D.draw_sphere(sheep.position, sheep.stress, Color.PURPLE)
+	
 	var v : Vector3 = Vector3.ZERO
 	var cohesion = cohesion_mult * (1 + sheep.stress * cohesion_panicked_mult) * cohesion_rule(sheep)
 	var alignment = alignment_mult * (1 + sheep.stress * alignment_panicked_mult) * alignment_rule(sheep)
 	var seperation = seperation_mult * (1 + sheep.stress * seperation_panicked_mult) * seperation_rule(sheep, seperation_radius)
 	var evasion = sheep.stress * escape_rule(sheep, predators) #ES calc is done inside escape_rule because of per predator
+	var random_motion = (1 + sheep.stress) * ceil(randf() - (1-random_motion_probability)) * rand_vec() * random_motion_intensity
 	
-	DebugDraw3D.draw_line(sheep.position, sheep.position + evasion, Color.FIREBRICK)
+	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + alignment.normalized(), Color.BLUE)
+	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + random_motion, Color.BLACK, .5, true)
+	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + evasion, Color.RED)
 	
 	v = (cohesion + alignment + seperation + evasion)
 	v = v.normalized() * min(v.length(),  (1 + sheep.stress * max_speed_panicked) * max_speed)
@@ -171,4 +182,7 @@ func inv(x, s):
 
 func inv_sqr(x, s):
 	return pow(s/(x + EPSILON), 2.)
+
+func rand_vec():
+	return Vector3(randf_range(-1, 1), 0, randf_range(-1, 1))
 	

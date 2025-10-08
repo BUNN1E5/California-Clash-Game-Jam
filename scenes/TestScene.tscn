@@ -1,9 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://qc2yt7m7siwc"]
+[gd_scene load_steps=10 format=3 uid="uid://qc2yt7m7siwc"]
 
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="2_n77mx"]
 [ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n77mx"]
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_2gju5"]
+material = SubResource("StandardMaterial3D_n77mx")
 size = Vector2(40, 40)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2gju5"]
@@ -26,11 +29,21 @@ material = SubResource("StandardMaterial3D_rlkm5")
 [node name="CanvasLayer" parent="." instance=ExtResource("2_n77mx")]
 follow_viewport_enabled = true
 
-[node name="SheepManager" type="Node" parent="."]
+[node name="SheepManager" type="Node" parent="." node_paths=PackedStringArray("predators")]
 script = ExtResource("2_rlkm5")
+predators = [NodePath("../Predator")]
+sheep_sight = 10.0
+seperation_radius = 7.0
+fear_radius = 6.0
+drag = 0.33
+predator_fear_mult = 0.8
+contagion_mult = 0.2
+max_speed = 5.0
+max_speed_panicked = 10.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -44,7 +57,7 @@ shadow_enabled = true
 environment = SubResource("Environment_n77mx")
 
 [node name="Predator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.285, 0, 1.78)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.345, -10.125, -17.415)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Predator"]
 mesh = SubResource("SphereMesh_n77mx")
