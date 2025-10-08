@@ -1,13 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://qc2yt7m7siwc"]
+[gd_scene load_steps=13 format=3 uid="uid://qc2yt7m7siwc"]
 
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="2_n77mx"]
+[ext_resource type="CompositorEffect" uid="uid://d257omkmirm83" path="res://enviroment/clouds/clouds.tres" id="2_nb1wl"]
 [ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
+[ext_resource type="Script" uid="uid://djusduuxf0voj" path="res://addons/SunshineClouds2/SunshineCloudsDriver.gd" id="3_m5dm6"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n77mx"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_2gju5"]
-material = SubResource("StandardMaterial3D_n77mx")
-size = Vector2(40, 40)
+[sub_resource type="Environment" id="Environment_nb1wl"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_rlkm5"]
 
@@ -18,11 +16,18 @@ sky_material = SubResource("PhysicalSkyMaterial_rlkm5")
 background_mode = 2
 sky = SubResource("Sky_rlkm5")
 ambient_light_source = 3
-volumetric_fog_enabled = true
 volumetric_fog_density = 0.0001
 volumetric_fog_anisotropy = 0.9
 adjustment_brightness = 2.3
 adjustment_contrast = 1.44
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n77mx"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2gju5"]
+material = SubResource("StandardMaterial3D_n77mx")
+size = Vector2(40, 40)
+subdivide_width = 100
+subdivide_depth = 100
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rlkm5"]
 albedo_color = Color(1, 0, 0, 1)
@@ -30,14 +35,101 @@ albedo_color = Color(1, 0, 0, 1)
 [sub_resource type="SphereMesh" id="SphereMesh_n77mx"]
 material = SubResource("StandardMaterial3D_rlkm5")
 
-[sub_resource type="BoxMesh" id="BoxMesh_n77mx"]
-
 [node name="TestScene" type="Node3D"]
 
 [node name="CanvasLayer" parent="." instance=ExtResource("2_n77mx")]
 follow_viewport_enabled = true
 
-[node name="SheepManager" type="Node" parent="." node_paths=PackedStringArray("predators")]
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.633)
+far = 40000.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.5852904, 0.7977635, 0.14494383, -0.06919735, -0.12896381, 0.989232, 0.8078658, -0.5890176, -0.020278549, 0, 0, 0.6012001)
+light_volumetric_fog_energy = 0.216
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_nb1wl")
+
+[node name="Clouds" type="Node" parent="."]
+
+[node name="SunshineCloudsDriverGD" type="Node" parent="Clouds" node_paths=PackedStringArray("tracked_directional_lights")]
+script = ExtResource("3_m5dm6")
+update_continuously = true
+clouds_resource = ExtResource("2_nb1wl")
+ambience_sample_environment = SubResource("Environment_n77mx")
+use_enviornment_ambience_for_fog = true
+tracked_directional_lights = [NodePath("../../DirectionalLight3D")]
+tracked_directional_light_shadow_steps = Array[int]([12])
+metadata/_custom_type_script = "uid://djusduuxf0voj"
+
+[node name="Enviroment" type="Node3D" parent="."]
+visible = false
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D12" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Enviroment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("PlaneMesh_2gju5")
+skeleton = NodePath("../..")
+
+[node name="Entities" type="Node3D" parent="."]
+
+[node name="SheepManager" type="Node" parent="Entities" node_paths=PackedStringArray("predators")]
 script = ExtResource("2_rlkm5")
 predators = [NodePath("../Predator")]
 sheep_sight = 10.0
@@ -49,33 +141,14 @@ contagion_mult = 0.2
 max_speed = 5.0
 max_speed_panicked = 10.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
-mesh = SubResource("PlaneMesh_2gju5")
+[node name="Predator2" type="Node3D" parent="Entities"]
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16.633)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Entities/Predator2"]
+mesh = SubResource("SphereMesh_n77mx")
+skeleton = NodePath("../../Predator2")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.45829174, 0.60619074, 0.6500013, -0.37056926, -0.53440726, 0.7596626, 0.80786586, -0.58901757, -0.020278767, 0, 0, 0.6012001)
-light_volumetric_fog_energy = 0.216
-shadow_enabled = true
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_n77mx")
-
-[node name="Predator" type="Node3D" parent="."]
+[node name="Predator" type="Node3D" parent="Entities"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.345, -10.125, -17.415)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Predator"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Entities/Predator"]
 mesh = SubResource("SphereMesh_n77mx")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 3.336264, 0, 0, 0, 7.3640046, 9.223413, -3.8076816, 0.50858593)
-visible = false
-mesh = SubResource("BoxMesh_n77mx")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 3.336264, 0, 0, 0, 7.3640046, 9.223413, 1.256763, 0.50858593)
-visible = false
-mesh = SubResource("BoxMesh_n77mx")

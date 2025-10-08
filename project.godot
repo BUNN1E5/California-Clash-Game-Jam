@@ -15,9 +15,17 @@ run/main_scene="uid://qc2yt7m7siwc"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
+
 [debug_draw_3d]
 
 settings/addon_root_folder="res://addons/debug_draw_3d"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/debug_menu/plugin.cfg")
 
 [physics]
 

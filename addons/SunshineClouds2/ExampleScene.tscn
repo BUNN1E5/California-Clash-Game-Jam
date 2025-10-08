@@ -14,12 +14,10 @@
 [ext_resource type="Script" uid="uid://dnblgqynq1t7l" path="res://addons/SunshineClouds2/SunshineClouds.gd" id="10_penpr"]
 [ext_resource type="NoiseTexture3D" uid="uid://bnck2kxeg5bkg" path="res://addons/SunshineClouds2/NoiseTextures/SmallScaleNoise.tres" id="11_re0u6"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_unbdf"]
-sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_g0kkk"]
 
 [sub_resource type="Sky" id="Sky_nuogy"]
-sky_material = SubResource("ProceduralSkyMaterial_unbdf")
+sky_material = SubResource("PhysicalSkyMaterial_g0kkk")
 process_mode = 3
 
 [sub_resource type="Environment" id="Environment_ftegy"]
@@ -72,8 +70,10 @@ access_resolved_depth = true
 needs_motion_vectors = true
 needs_normal_roughness = false
 script = ExtResource("10_penpr")
+clouds_coverage = 0.005
 cloud_ambient_color = Color(0.518, 0.553, 0.608, 1)
 atmosphere_color = Color(0.518, 0.553, 0.608, 1)
+max_step_count = 50.0
 dither_noise = ExtResource("3_uu0np")
 height_gradient = ExtResource("5_2j4np")
 extra_large_noise_patterns = ExtResource("4_6wvml")
@@ -84,7 +84,9 @@ curl_noise = ExtResource("2_0jtrb")
 pre_pass_compute_shader = ExtResource("9_4bu1u")
 compute_shader = ExtResource("1_g0kkk")
 post_pass_compute_shader = ExtResource("8_f1cuh")
-wind_direction = Vector3(1, 0, 1)
+origin_offset = Vector3(4.9, 0, 0)
+wind_direction = Vector3(7.515, 0, 1)
+directional_lights_data = Array[Vector4]([Vector4(0.6818422, 0.71973056, 0.13068716, 12), Vector4(1, 1, 1, 1)])
 
 [node name="ExampleScene" type="Node3D"]
 
@@ -93,7 +95,7 @@ environment = SubResource("Environment_ftegy")
 compositor = SubResource("Compositor_nuogy")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.08739669, -0.9947217, -0.053761944, 0.13503906, -0.041640196, 0.98996514, -0.9869783, -0.09377969, 0.13068706, -8, 2, -2)
+transform = Transform3D(0.15814453, -0.7141997, 0.68184197, 0.029394042, 0.69363093, 0.71973115, -0.98697853, -0.09377952, 0.1306872, -8, 2, -2)
 shadow_enabled = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -141,17 +143,21 @@ omni_range = 20000.0
 [node name="SunshineCloudsEffector" type="Node3D" parent="."]
 transform = Transform3D(0.241651, 0, 0.970363, 0, 1, 0, -0.970363, 0, 0.241651, 19316.8, -2863.07, -3971.34)
 script = ExtResource("3_afwv5")
-Radius = 18900.9
-Power = 1.18
+Radius = 4955.3240000000005
+Power = -40.316
 metadata/_custom_type_script = "uid://bxlm4e5qfb7uu"
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12376.3, 3579.21)
 far = 400000.0
 
-[node name="SunshineCloudsDriverGD" type="Node" parent="."]
+[node name="SunshineCloudsDriverGD" type="Node" parent="." node_paths=PackedStringArray("tracked_directional_lights")]
 script = ExtResource("3_unbdf")
 update_continuously = true
 clouds_resource = SubResource("CompositorEffect_iiawa")
 ambience_sample_environment = SubResource("Environment_ftegy")
+tracked_directional_lights = [NodePath("../DirectionalLight3D")]
+tracked_directional_light_shadow_steps = Array[int]([12])
+origin_offset = Vector3(4.9, 0, 0)
+wind_direction = Vector3(7.515, 0, 1)
 metadata/_custom_type_script = "uid://djusduuxf0voj"
