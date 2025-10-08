@@ -1,0 +1,157 @@
+[gd_scene load_steps=23 format=3 uid="uid://c1jy5gwigpsrl"]
+
+[ext_resource type="RDShaderFile" uid="uid://dx1y5cye1m1hu" path="res://addons/SunshineClouds2/SunshineCloudsCompute.glsl" id="1_g0kkk"]
+[ext_resource type="CompressedTexture3D" uid="uid://dei12lsgrjpyu" path="res://addons/SunshineClouds2/NoiseTextures/curl_noise_varied.tga" id="2_0jtrb"]
+[ext_resource type="Script" uid="uid://bxlm4e5qfb7uu" path="res://addons/SunshineClouds2/SunshineCloudEffector.gd" id="3_afwv5"]
+[ext_resource type="Script" uid="uid://djusduuxf0voj" path="res://addons/SunshineClouds2/SunshineCloudsDriver.gd" id="3_unbdf"]
+[ext_resource type="CompressedTexture3D" uid="uid://b3uyfsp4in821" path="res://addons/SunshineClouds2/NoiseTextures/bluenoise_Dither.png" id="3_uu0np"]
+[ext_resource type="Texture2D" uid="uid://de2nsujnhdlg0" path="res://addons/SunshineClouds2/NoiseTextures/ExtraLargeScaleNoise.tres" id="4_6wvml"]
+[ext_resource type="Texture2D" uid="uid://g02m2ewpwusq" path="res://addons/SunshineClouds2/NoiseTextures/HeightGradient.tres" id="5_2j4np"]
+[ext_resource type="NoiseTexture3D" uid="uid://6ed3lvlpbqmg" path="res://addons/SunshineClouds2/NoiseTextures/LargeScaleNoise.tres" id="6_tq3dl"]
+[ext_resource type="NoiseTexture3D" uid="uid://dxyewgt7o40m0" path="res://addons/SunshineClouds2/NoiseTextures/MediumScaleNoise.tres" id="7_mnubm"]
+[ext_resource type="RDShaderFile" uid="uid://chxheyp4eohbc" path="res://addons/SunshineClouds2/SunshineCloudsPostCompute.glsl" id="8_f1cuh"]
+[ext_resource type="RDShaderFile" uid="uid://crfpk8ta4qxsk" path="res://addons/SunshineClouds2/SunshineCloudsPreCompute.glsl" id="9_4bu1u"]
+[ext_resource type="Script" uid="uid://dnblgqynq1t7l" path="res://addons/SunshineClouds2/SunshineClouds.gd" id="10_penpr"]
+[ext_resource type="NoiseTexture3D" uid="uid://bnck2kxeg5bkg" path="res://addons/SunshineClouds2/NoiseTextures/SmallScaleNoise.tres" id="11_re0u6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_unbdf"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_nuogy"]
+sky_material = SubResource("ProceduralSkyMaterial_unbdf")
+process_mode = 3
+
+[sub_resource type="Environment" id="Environment_ftegy"]
+background_mode = 2
+sky = SubResource("Sky_nuogy")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_6b1a5"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 3
+access_resolved_color = true
+access_resolved_depth = true
+needs_motion_vectors = true
+needs_normal_roughness = false
+script = ExtResource("10_penpr")
+dither_noise = ExtResource("3_uu0np")
+height_gradient = ExtResource("5_2j4np")
+extra_large_noise_patterns = ExtResource("4_6wvml")
+large_scale_noise = ExtResource("6_tq3dl")
+medium_scale_noise = ExtResource("7_mnubm")
+small_scale_noise = ExtResource("11_re0u6")
+curl_noise = ExtResource("2_0jtrb")
+pre_pass_compute_shader = ExtResource("9_4bu1u")
+compute_shader = ExtResource("1_g0kkk")
+post_pass_compute_shader = ExtResource("8_f1cuh")
+directional_lights_data = Array[Vector4]([Vector4(0.5, 1, 0.5, 16), Vector4(1, 1, 1, 1)])
+metadata/_custom_type_script = "uid://dnblgqynq1t7l"
+
+[sub_resource type="Compositor" id="Compositor_nuogy"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_6b1a5")])
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_o8tia"]
+height = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_o8tia"]
+size = Vector2(10, 10)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_nv18y"]
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_iiawa"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 3
+access_resolved_color = true
+access_resolved_depth = true
+needs_motion_vectors = true
+needs_normal_roughness = false
+script = ExtResource("10_penpr")
+cloud_ambient_color = Color(0.518, 0.553, 0.608, 1)
+atmosphere_color = Color(0.518, 0.553, 0.608, 1)
+dither_noise = ExtResource("3_uu0np")
+height_gradient = ExtResource("5_2j4np")
+extra_large_noise_patterns = ExtResource("4_6wvml")
+large_scale_noise = ExtResource("6_tq3dl")
+medium_scale_noise = ExtResource("7_mnubm")
+small_scale_noise = ExtResource("11_re0u6")
+curl_noise = ExtResource("2_0jtrb")
+pre_pass_compute_shader = ExtResource("9_4bu1u")
+compute_shader = ExtResource("1_g0kkk")
+post_pass_compute_shader = ExtResource("8_f1cuh")
+wind_direction = Vector3(1, 0, 1)
+
+[node name="ExampleScene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ftegy")
+compositor = SubResource("Compositor_nuogy")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.08739669, -0.9947217, -0.053761944, 0.13503906, -0.041640196, 0.98996514, -0.9869783, -0.09377969, 0.13068706, -8, 2, -2)
+shadow_enabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, 12000, 0, 0, 0, 1000, 6000, 6000, 0)
+mesh = SubResource("CylinderMesh_o8tia")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, 12000, 0, 0, 0, 1000, 6000, 6000, -40000)
+mesh = SubResource("CylinderMesh_o8tia")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, 12000, 0, 0, 0, 1000, 6000, 6000, -20000)
+mesh = SubResource("CylinderMesh_o8tia")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, 12000, 0, 0, 0, 1000, 6000, 6000, -60000)
+mesh = SubResource("CylinderMesh_o8tia")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1000, 0, 0, 0, 12000, 0, 0, 0, 1000, 6000, 6000, -80000)
+mesh = SubResource("CylinderMesh_o8tia")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_o8tia")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_nv18y")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.985589, 0.16916, 0, -0.16916, 0.985589, 0, 2.61482, -5.55018)
+modulate = Color(0, 0, 0, 1)
+text = "This is an example scene, 
+please note the quality settings are all set to high, 
+this is mostly just an example, 
+feel free to try turning down the settings."
+font_size = 128
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10743.6, 6693.89, -43458.2)
+light_color = Color(0.76, 0.374933, 0.1824, 1)
+light_energy = 11.685
+omni_range = 20000.0
+
+[node name="SunshineCloudsEffector" type="Node3D" parent="."]
+transform = Transform3D(0.241651, 0, 0.970363, 0, 1, 0, -0.970363, 0, 0.241651, 19316.8, -2863.07, -3971.34)
+script = ExtResource("3_afwv5")
+Radius = 18900.9
+Power = 1.18
+metadata/_custom_type_script = "uid://bxlm4e5qfb7uu"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12376.3, 3579.21)
+far = 400000.0
+
+[node name="SunshineCloudsDriverGD" type="Node" parent="."]
+script = ExtResource("3_unbdf")
+update_continuously = true
+clouds_resource = SubResource("CompositorEffect_iiawa")
+ambience_sample_environment = SubResource("Environment_ftegy")
+metadata/_custom_type_script = "uid://djusduuxf0voj"
