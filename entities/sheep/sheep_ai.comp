@@ -1,0 +1,116 @@
+//#[compute]
+#version 450
+
+// Invocations in the (x, y, z) dimension
+layout(local_size_x = 2, local_size_y = 1, local_size_z = 1) in;
+
+const float EPSILON = 0.00001;
+
+struct Sheep{
+    vec3 position;
+    vec3 velocity;
+    float fear;
+    float contagion;
+
+    float courage;
+
+    float view_distance;
+    float fear_distance;
+    float max_speed;
+    float max_speed_afraid;
+    float drag;
+
+    int neighbor_count;
+};
+
+struct Predator{
+    vec3 position;
+    float thread_intesity;
+};
+
+layout(set = 0, binding = 0, std430) restrict buffer SheepBuffer {
+    Sheep sheep[];
+} flock;
+uniform int flock_size;
+
+layout(set = 0, binding = 0, std430) restrict buffer PredatorBuffer {
+    Predator predator[];
+} pack;
+uniform int pack_size;
+
+uniform float emotional_stress_mult;    // m (sigmoid multiplier)
+
+// Flocking Parameters
+uniform float seperation_radius;
+uniform float cohesion_mult;            // Cf
+uniform float alignment_mult;           // Af
+uniform float seperation_mult;          // Sf
+
+uniform float predator_fear_mult;       // Eef
+uniform float contagion_mult;
+
+// Panicked Multipliers
+uniform float cohesion_afraid_mult;   // Cef
+uniform float alignment_afraid_mult;  // Aef
+uniform float seperation_afraid_mult; // Sef
+
+
+float emotional_stress(float d, float r, float m){
+    return atan2((r - d), m) / PI + .5;
+}
+
+float inv_sqr(float x, float s):
+	return pow(s/(x + EPSILON), 2.);
+
+//Implementing Sheep Boids based on this paper here:
+//https://www.diva-portal.org/smash/get/diva2:1354921/FULLTEXT01.pdf
+
+void main(){
+    uint boidID = gl_GlobalInvocationID.x;
+    for(uint i = 0; i < flock_size; i++){
+        Sheep self = flock.sheep[boidID];
+        Sheep other = flock.sheep[i];
+        
+        if(self == other) continue;
+
+        //Escape
+        vec3 escape_vector = vec3(0.);
+        for(uint j = 0; j < pack_size; j++){
+            Predator p = pack.predator[j];
+            float dist = distance(self.position, predator.position);
+            if(distance(self.position, predator.position) < self.fear_distance){
+                vec3 escape = self.position - predator.position;
+                float stress = emotional_stress(dist, sheep.fear_distance, courage);
+                escape_vector += stress * normalize(escape);
+            }
+        }
+
+        //Alignment, Cohesion, and Contagion 
+        vec3 alignment_vector = vec3(0.);
+        vec3 cohesion_vector = vec3(0.);
+        self.contagion = 0.;
+
+        vec3 neighbor_average = vec3(0.);
+
+        if(distance(self, other) < self.view_distance){
+            self.neighbor_count++;
+            alignment_vector += other.velocity;
+            neighbor_average += other.position;'
+            self.contagion += other.fear;
+        }
+        self.neighbor_count = max(1, self.neighbor_count);
+        neighbor_average /= self.neighbor_count;
+        alignment_vector /= self.neighbor_count;
+        self.contagion /= self.neighbor_count;
+
+        cohesion_vector = neighbor_average - sheep.position;
+
+        //Seperation
+        vec3 seperationVector = vec3(0.);
+        vec3 seperation = -(other.position - self.position);
+        float dist = length(seperation);
+        if(dist < neighbor_radius):
+			seperation_vector += (neighbor_radius - dist)/(dist+EPSILON) * seperation;
+    }
+}
+
