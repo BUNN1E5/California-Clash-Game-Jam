@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="2_n77mx"]
 [ext_resource type="CompositorEffect" uid="uid://d257omkmirm83" path="res://enviroment/clouds/clouds.tres" id="2_nb1wl"]
-[ext_resource type="Script" uid="uid://bcvjbu3w07il2" path="res://entities/sheep/sheep_manager.gd" id="2_rlkm5"]
 [ext_resource type="Script" uid="uid://djusduuxf0voj" path="res://addons/SunshineClouds2/SunshineCloudsDriver.gd" id="3_m5dm6"]
+[ext_resource type="Script" uid="uid://mrylmnpfeohy" path="res://entities/sheep/sheep_manager_GPU.gd" id="4_nb1wl"]
 
 [sub_resource type="Environment" id="Environment_nb1wl"]
 
@@ -65,60 +65,70 @@ tracked_directional_light_shadow_steps = Array[int]([12])
 metadata/_custom_type_script = "uid://djusduuxf0voj"
 
 [node name="Enviroment" type="Node3D" parent="."]
-visible = false
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D7" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D8" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D9" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D10" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D11" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D12" type="MeshInstance3D" parent="Enviroment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+visible = false
 mesh = SubResource("PlaneMesh_2gju5")
 skeleton = NodePath("../..")
 
@@ -129,30 +139,16 @@ skeleton = NodePath("../..")
 
 [node name="Entities" type="Node3D" parent="."]
 
-[node name="SheepManager" type="Node" parent="Entities" node_paths=PackedStringArray("predators")]
-script = ExtResource("2_rlkm5")
-predators = [NodePath("../Predator")]
-sheep_sight = 10.0
-seperation_radius = 4.0
-fear_radius = 8.0
-random_motion_intensity = 5.745
-drag = 0.92
-acc_mult = 100.0
-cohesion_mult = 2.68
-alignment_mult = 1.63
-seperation_mult = 2.46
+[node name="SheepManager" type="Node3D" parent="Entities" node_paths=PackedStringArray("pack")]
+script = ExtResource("4_nb1wl")
+FLOCK_SIZE = 2000
+pack = [NodePath("../Predator")]
+drag = 0.87
+acc_mult = 200.0
 contagion_mult = 0.1
-max_speed = 5.0
-max_speed_panicked = 10.0
-
-[node name="Predator2" type="Node3D" parent="Entities"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Entities/Predator2"]
-mesh = SubResource("SphereMesh_n77mx")
-skeleton = NodePath("../../Predator2")
 
 [node name="Predator" type="Node3D" parent="Entities"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.62, 0, 15.59)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.74, 0, 1.39)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Entities/Predator"]
 mesh = SubResource("SphereMesh_n77mx")

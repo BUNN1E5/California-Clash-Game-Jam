@@ -16,8 +16,6 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 @export var seperation_radius : float = 5.0
 @export var fear_radius : float = 4.2        # same as r_fear
 @export var emotional_stress_mult : float = 0.7   # m (sigmoid multiplier)
-@export var random_motion_probability : float = .25
-@export var random_motion_intensity : float = 1
 @export_range(0, .99, .01) var drag : float = .99
 
 # --- Flocking Parameters ---
@@ -79,7 +77,7 @@ func _process(delta: float) -> void:
 		sheep.velocity = sheep.acceleration * delta * acc_mult
 		sheep.velocity *= (1.-drag)
 		sheep.position += sheep.velocity * delta
-		sheep.position = Vector3(clamp(sheep.position.x, -20., 20.), clamp(sheep.position.y, -20., 20.), clamp(sheep.position.z, -20., 20.))
+		sheep.position = Vector3(clamp(sheep.position.x, -20., 20.), clamp(sheep.position.y, 0,0), clamp(sheep.position.z, -20., 20.))
 		DebugDraw3D.draw_box(Vector3.ONE * -20, Quaternion.IDENTITY, Vector3.ONE * 40, Color.BLACK)
 	
 func alignment_rule(sheep : SheepAI):
@@ -131,18 +129,17 @@ func calculate_result_vector(sheep : SheepAI, predators):
 		DebugDraw3D.draw_sphere(predator.position, fear_radius, Color.DARK_RED)
 		max_predator_stress = max(max_predator_stress, predator_stress)
 		
-	sheep.stress = predator_fear_mult * max_predator_stress + contagion_mult * fear_contagion(sheep) 
-	DebugDraw3D.draw_sphere(sheep.position, sheep.stress, Color.PURPLE)
+	sheep.fear = predator_fear_mult * max_predator_stress + contagion_mult * fear_contagion(sheep) 
+	DebugDraw3D.draw_sphere(sheep.position, sheep.fear, Color.PURPLE)
 	
 	var v : Vector3 = Vector3.ZERO
-	var cohesion = cohesion_mult * (1 + sheep.stress * cohesion_panicked_mult) * cohesion_rule(sheep)
-	var alignment = alignment_mult * (1 + sheep.stress * alignment_panicked_mult) * alignment_rule(sheep)
-	var seperation = seperation_mult * (1 + sheep.stress * seperation_panicked_mult) * seperation_rule(sheep, seperation_radius)
-	var evasion = sheep.stress * escape_rule(sheep, predators) #ES calc is done inside escape_rule because of per predator
-	var random_motion = (1 + sheep.stress) * ceil(randf() - (1-random_motion_probability)) * rand_vec() * random_motion_intensity
+	var cohesion = cohesion_mult * (1 + sheep.fear * cohesion_panicked_mult) * cohesion_rule(sheep)
+	var alignment = alignment_mult * (1 + sheep.fear * alignment_panicked_mult) * alignment_rule(sheep)
+	var seperation = seperation_mult * (1 + sheep.fear * seperation_panicked_mult) * seperation_rule(sheep, seperation_radius)
+	var evasion = sheep.fear * escape_rule(sheep, predators) #ES calc is done inside escape_rule because of per predator
 	
 	v = (cohesion + alignment + seperation + evasion)
-	v = v.normalized() * min(v.length(),  (1 + sheep.stress * max_speed_panicked) * max_speed)
+	v = v.normalized() * min(v.length(),  (1 + sheep.fear * max_speed_panicked) * max_speed)
 	return v
 
 

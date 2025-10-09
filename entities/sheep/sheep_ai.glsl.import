@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b6h5ur8d6c10v"
+path="res://.godot/imported/sheep_ai.glsl-f3a9c7fa6d877455188e58157ee1a284.res"
+
+[deps]
+
+source_file="res://entities/sheep/sheep_ai.glsl"
+dest_files=["res://.godot/imported/sheep_ai.glsl-f3a9c7fa6d877455188e58157ee1a284.res"]
+
+[params]
+
