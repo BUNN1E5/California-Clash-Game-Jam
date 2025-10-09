@@ -22,6 +22,7 @@ var all_sheep: Array[SheepAI] = [] # Stores all SheepAI instances
 
 # --- Flocking Parameters ---
 @export_category("Flocking Parameters")
+@export var acc_mult : float = 2.0      # Cf
 @export var cohesion_mult : float = 2.0      # Cf
 @export var alignment_mult : float = 0.5     # Af
 @export var seperation_mult : float = 0.17   # Sf
@@ -65,7 +66,6 @@ func _ready() -> void:
 		if !names_available.is_empty():
 			var index: int = randi_range(0, names_available.size() - 1)
 			sheep.name = "sheep | " + names_available[index]
-			sheep.sheep_name = sheep.name
 			names_available.remove_at(index)
 			
 		# Add sheep to the array for global calculations
@@ -75,8 +75,9 @@ func _process(delta: float) -> void:
 	if all_sheep.is_empty():
 		return
 	for sheep in all_sheep:
-		sheep.velocity = calculate_result_vector(sheep, predators)
-		sheep.velocity *= drag
+		sheep.acceleration = calculate_result_vector(sheep, predators)
+		sheep.velocity = sheep.acceleration * delta * acc_mult
+		sheep.velocity *= (1.-drag)
 		sheep.position += sheep.velocity * delta
 		sheep.position = Vector3(clamp(sheep.position.x, -20., 20.), clamp(sheep.position.y, -20., 20.), clamp(sheep.position.z, -20., 20.))
 		DebugDraw3D.draw_box(Vector3.ONE * -20, Quaternion.IDENTITY, Vector3.ONE * 40, Color.BLACK)
@@ -140,10 +141,6 @@ func calculate_result_vector(sheep : SheepAI, predators):
 	var evasion = sheep.stress * escape_rule(sheep, predators) #ES calc is done inside escape_rule because of per predator
 	var random_motion = (1 + sheep.stress) * ceil(randf() - (1-random_motion_probability)) * rand_vec() * random_motion_intensity
 	
-	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + alignment.normalized(), Color.BLUE)
-	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + random_motion, Color.BLACK, .5, true)
-	#DebugDraw3D.draw_arrow(sheep.position, sheep.position + evasion, Color.RED)
-	
 	v = (cohesion + alignment + seperation + evasion)
 	v = v.normalized() * min(v.length(),  (1 + sheep.stress * max_speed_panicked) * max_speed)
 	return v
@@ -158,7 +155,7 @@ func escape_rule(sheep : SheepAI, predators : Array[Node3D]) -> Vector3:
 		if escape.length_squared() < fear_radius**2:
 			var stress = emotional_stress(sheep.position.distance_to(predator.position), fear_radius, emotional_stress_mult)
 			var e = escape.normalized() * inv(escape.length_squared(), emotional_stress_mult)
-			escape_vector += stress * e
+			escape_vector += stress * escape.normalized()
 	return escape_vector
 
 func emotional_stress(threat_distance : float, fear_radius : float, m : float):

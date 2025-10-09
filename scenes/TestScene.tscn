@@ -133,11 +133,15 @@ skeleton = NodePath("../..")
 script = ExtResource("2_rlkm5")
 predators = [NodePath("../Predator")]
 sheep_sight = 10.0
-seperation_radius = 7.0
-fear_radius = 6.0
-drag = 0.33
-predator_fear_mult = 0.8
-contagion_mult = 0.2
+seperation_radius = 4.0
+fear_radius = 8.0
+random_motion_intensity = 5.745
+drag = 0.92
+acc_mult = 100.0
+cohesion_mult = 2.68
+alignment_mult = 1.63
+seperation_mult = 2.46
+contagion_mult = 0.1
 max_speed = 5.0
 max_speed_panicked = 10.0
 
@@ -148,7 +152,7 @@ mesh = SubResource("SphereMesh_n77mx")
 skeleton = NodePath("../../Predator2")
 
 [node name="Predator" type="Node3D" parent="Entities"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.345, -10.125, -17.415)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.62, 0, 15.59)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Entities/Predator"]
 mesh = SubResource("SphereMesh_n77mx")
